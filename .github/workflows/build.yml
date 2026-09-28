@@ -1,0 +1,23 @@
+name: Build Check
+
+# 每次推送和 PR 都跑一遍编译，确保代码始终能构建通过
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - 'v*'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 编译 universal 版
+        run: ./build.sh
+
+      - name: 确认二进制架构
+        run: lipo -info dist/WorkMode.app/Contents/MacOS/WorkMode

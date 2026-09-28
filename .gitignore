@@ -1,0 +1,6 @@
+dist/
+.backup/
+.DS_Store
+*.dmg
+*.swp
+/tmp/

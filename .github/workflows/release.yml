@@ -1,0 +1,38 @@
+name: Release
+
+# 推送 v* 标签时自动编译 universal 版、打包 dmg 并创建 Release
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-14
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 编译并打包 dmg
+        run: ./build.sh --package
+
+      - name: 整理待发布文件
+        run: |
+          mkdir -p release
+          cp dist/*.dmg release/
+          cp Resources/安装说明.md release/
+          shasum -a 256 release/*.dmg > release/SHA256.txt
+          cat release/SHA256.txt
+
+      - name: 创建 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/*.dmg
+            release/安装说明.md
+            release/SHA256.txt
+          generate_release_notes: true
