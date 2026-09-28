@@ -6,6 +6,9 @@
 #   ./build.sh               只编译 .app（universal：arm64 + x86_64）
 #   ./build.sh --package     编译 + 产出可分发的 dmg（含安装说明）
 #   ./build.sh --arch=arm64  只编译指定架构
+#
+# 注意：变量后面紧跟中文或全角标点时必须写成 ${var}。
+# CI 的 locale 是 C，多字节字符会被 bash 当成变量名的一部分（$arch）→ 报 unbound variable。
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -61,7 +64,7 @@ for arch in $ARCHES; do
     x86_64) target="$TARGET_X86" ;;
     *) continue ;;
   esac
-  echo "==> 编译 Swift 源码（$arch）"
+  echo "==> 编译 Swift 源码（${arch}）"
   if swiftc -O \
     -target "$target" \
     -sdk "$SDK" \
@@ -81,7 +84,7 @@ fi
 # shellcheck disable=SC2086
 set -- $BUILT
 if [ "$#" -eq 1 ]; then
-  echo "==> 复制可执行文件（单架构 $ARCHES）"
+  echo "==> 复制可执行文件（单架构 ${ARCHES}）"
   cp "$1" "$MACOS/$APP_NAME"
 else
   echo "==> 合并为 universal 二进制"
