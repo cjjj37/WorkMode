@@ -24,7 +24,8 @@ jobs:
         run: |
           mkdir -p release
           cp dist/*.dmg release/
-          cp Resources/安装说明.md release/
+          # 用 ASCII 文件名：CI 上传中文名的附件会被改名成 default.md
+          cp Resources/安装说明.md release/INSTALL-zh.md
           shasum -a 256 release/*.dmg > release/SHA256.txt
           cat release/SHA256.txt
 
@@ -33,6 +34,6 @@ jobs:
         with:
           files: |
             release/*.dmg
-            release/安装说明.md
+            release/INSTALL-zh.md
             release/SHA256.txt
           generate_release_notes: true
